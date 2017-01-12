@@ -1,0 +1,29 @@
+# Base docker compose, added to by docker-compose.override or docker-compose.prod. See Readme.md
+
+version: '2'
+
+services:
+
+  sickbeard:
+    image: wbvreeuwijk/sickbeard
+    build: sickbeard
+    
+
+  sabnzbd:
+    image: wbvreeuwijk/sabnzbd
+    build: sabnzbd
+    ports: 
+      - "8080:8080"
+    volumes:
+      - download-complete:/home/sabnzbd/Downloads/complete
+      - download-incomplete:/home/sabnzbd/Downloads/incomplete
+      - sabnzbd-config:/home/sabnzbd/.sabnzbd
+
+
+volumes:
+  download-complete:
+    driver: local
+  download-incomplete:
+    driver: local
+  sabnzbd-config:
+    driver: local
