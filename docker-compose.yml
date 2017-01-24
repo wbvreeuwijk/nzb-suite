@@ -3,27 +3,56 @@
 version: '2'
 
 services:
-
-  sickbeard:
-    image: wbvreeuwijk/sickbeard
-    build: sickbeard
-    
-
   sabnzbd:
-    image: wbvreeuwijk/sabnzbd
+    user: sabnzbd
+    image: wbvreeuwijk/sabnzbd:latest
     build: sabnzbd
     ports: 
       - "8080:8080"
     volumes:
-      - download-complete:/home/sabnzbd/Downloads/complete
-      - download-incomplete:/home/sabnzbd/Downloads/incomplete
-      - sabnzbd-config:/home/sabnzbd/.sabnzbd
+      - download-complete:/downloads/complete
+      - download-incomplete:/downloads/incomplete
+      - /volume2/docker/config/sabnzbd:/config
 
+  sickbeard:
+    user: sabnzbd
+    image: wbvreeuwijk/sickbeard:latest
+    build: sickbeard
+    ports:
+      - "8081:8081"
+    volumes:
+      - download-complete:/downloads/complete
+      - /volume2/video:/video
+      - /volume2/docker/config/sickbeard:/config
+
+  couchpotato:
+    user: sabnzbd
+    image: wbvreeuwijk/couchpotato:latest
+    build: couchpotato
+    ports:
+      - "5050:5050"
+    volumes:
+      - download-complete:/downloads/complete
+      - /volume2/video:/video
+      - /volume2/docker/config/couchpotato:/config
+
+  subliminal:
+    user: sabnzbd
+    image: wbvreeuwijk/subliminal:latest
+    build: subliminal
+    volumes:
+      - /volume2/video:/video
+
+  nzbmegasearch:
+    image: wbvreeuwijk/nzbmegasearch:latest
+    build: nzbmegasearch
+    ports:
+      - "5005:5000"
+    volumes:
+      - /volume2/docker/config/nzbmegasearch:/config
 
 volumes:
   download-complete:
     driver: local
   download-incomplete:
-    driver: local
-  sabnzbd-config:
     driver: local
