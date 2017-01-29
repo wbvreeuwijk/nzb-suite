@@ -6,6 +6,7 @@ services:
   sabnzbd:
     user: sabnzbd
     image: wbvreeuwijk/sabnzbd:latest
+    container_name: nzb_sabnzbd
     build: sabnzbd
     ports: 
       - "8080:8080"
@@ -16,6 +17,7 @@ services:
 
   sickbeard:
     user: sabnzbd
+    container_name: nzb_sickbeard
     image: wbvreeuwijk/sickbeard:latest
     build: sickbeard
     ports:
@@ -27,6 +29,7 @@ services:
 
   couchpotato:
     user: sabnzbd
+    container_name: nzb_couchpotato
     image: wbvreeuwijk/couchpotato:latest
     build: couchpotato
     ports:
@@ -38,6 +41,7 @@ services:
 
   subliminal:
     user: sabnzbd
+    container_name: nzb_subliminal
     image: wbvreeuwijk/subliminal:latest
     build: subliminal
     volumes:
@@ -45,14 +49,32 @@ services:
 
   nzbmegasearch:
     image: wbvreeuwijk/nzbmegasearch:latest
+    container_name: nzb_nzbmegasearch
     build: nzbmegasearch
     ports:
       - "5005:5000"
     volumes:
       - /volume2/docker/config/nzbmegasearch:/config
+      
+  spotweb:
+    image: wbvreeuwijk/spotweb:latest
+    container_name: nzb_spotweb
+    build: spotweb
+    environment:
+      MYSQL_PORT_3306_TCP_ADDR: 192.168.100.9
+      MYSQL_ENV_MYSQL_DATABASE: spotweb
+      MYSQL_ENV_MYSQL_USER:     spotweb
+      MYSQL_ENV_MYSQL_PASSWORD: T1mbuk3!
+    ports:
+      - "18888:80"
+    volumes:
+      - spotweb-cache:/var/www/html/spotweb/cache
+    
 
 volumes:
   download-complete:
     driver: local
   download-incomplete:
+    driver: local
+  spotweb-cache:
     driver: local
