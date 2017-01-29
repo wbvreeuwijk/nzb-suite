@@ -60,11 +60,6 @@ services:
     image: wbvreeuwijk/spotweb:latest
     container_name: nzb_spotweb
     build: spotweb
-    environment:
-      MYSQL_PORT_3306_TCP_ADDR: 192.168.100.9
-      MYSQL_ENV_MYSQL_DATABASE: spotweb
-      MYSQL_ENV_MYSQL_USER:     spotweb
-      MYSQL_ENV_MYSQL_PASSWORD: T1mbuk3!
     ports:
       - "18888:80"
     volumes:
