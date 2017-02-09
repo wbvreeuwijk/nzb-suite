@@ -16,6 +16,11 @@ All you need is
 Get the *docker-compose.yml* file and modify the parameters to your liking
 
 Usage:
-```docker-compose up -d```
+`docker-compose up -d`
 
-
+The following services will be started:
+* SABNzbd       (https://sabnzbd.org/):                   8080
+* SickBeard     (http://sickbeard.com/):                  8081
+* CouchPotato   (https://couchpota.to/):                  5050
+* NZBmegaSearch (http://pillone.github.io/usntssearch/):  5005
+* Spotweb       (https://github.com/spotweb/spotweb):     18888
