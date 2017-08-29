@@ -8,42 +8,72 @@ services:
     image: wbvreeuwijk/sabnzbd:latest
     container_name: nzb_sabnzbd
     build: sabnzbd
-    ports: 
-      - "8080:8080"
+    dns: 192.168.100.9
+    networks:
+      - proxy
     volumes:
-      - download-complete:/downloads/complete
+      - /volume2/downloads/complete:/downloads/complete
       - download-incomplete:/downloads/incomplete
       - /volume2/docker/config/sabnzbd:/config
 
-  sickbeard:
+  sickrage:
     user: sabnzbd
-    container_name: nzb_sickbeard
-    image: wbvreeuwijk/sickbeard:latest
-    build: sickbeard
+    container_name: nzb_sickrage
+    image: wbvreeuwijk/sickrage:latest
+    depends_on:
+      - sabnzbd
+      - nzbmegasearch
+    build: sickrage
+    cpu_quota: 25000
+    dns: 192.168.100.9
     ports:
-      - "8081:8081"
+      - 8082:8081
+    networks:
+      - proxy
     volumes:
-      - download-complete:/downloads/complete
+      - /volume2/downloads/complete:/downloads/complete
       - /volume2/video:/video
-      - /volume2/docker/config/sickbeard:/config
+      - /volume2/docker/config/sickrage:/config
+  
+#  sickbeard:
+#    user: sabnzbd
+#    container_name: nzb_sickbeard
+#    image: wbvreeuwijk/sickbeard:latest
+#    build: sickbeard
+#    dns: 192.168.100.9
+#    networks:
+#      - proxy
+#    volumes:
+#      - /volume2/downloads/complete:/downloads/complete
+#      - /volume2/video:/video
+#      - /volume2/docker/config/sickbeard:/config
 
   couchpotato:
     user: sabnzbd
     container_name: nzb_couchpotato
+    cpu_quota: 25000
     image: wbvreeuwijk/couchpotato:latest
+    depends_on:
+      - sabnzbd
+      - nzbmegasearch
     build: couchpotato
-    ports:
-      - "5050:5050"
+    dns: 192.168.100.9
+    networks:
+      - proxy
     volumes:
-      - download-complete:/downloads/complete
+      - /volume2/downloads/complete:/downloads/complete
       - /volume2/video:/video
       - /volume2/docker/config/couchpotato:/config
 
   subliminal:
     user: sabnzbd
     container_name: nzb_subliminal
+    cpu_quota: 25000
     image: wbvreeuwijk/subliminal:latest
     build: subliminal
+    dns: 192.168.100.9
+    networks:
+      - proxy
     volumes:
       - /volume2/video:/video
 
@@ -51,25 +81,27 @@ services:
     image: wbvreeuwijk/nzbmegasearch:latest
     container_name: nzb_nzbmegasearch
     build: nzbmegasearch
-    ports:
-      - "5005:5000"
+    dns: 192.168.100.9
+    networks:
+      - proxy
     volumes:
       - /volume2/docker/config/nzbmegasearch:/config
       
   spotweb:
     image: wbvreeuwijk/spotweb:latest
     container_name: nzb_spotweb
+    cpu_quota: 25000
     build: spotweb
+    dns: 192.168.100.9
+    networks:
+      - proxy
     environment:
       - MYSQL_PORT_3306_TCP_ADDR
       - MYSQL_ENV_MYSQL_DATABASE
       - MYSQL_ENV_MYSQL_USER
       - MYSQL_ENV_MYSQL_PASSWORD
-    ports:
-      - "18888:80"
     volumes:
       - spotweb-cache:/var/www/html/spotweb/cache
-    
 
 volumes:
   download-complete:
@@ -78,3 +110,8 @@ volumes:
     driver: local
   spotweb-cache:
     driver: local
+
+networks:
+  proxy:
+    external:
+      name: nginx_backend

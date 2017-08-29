@@ -1,4 +1,4 @@
-# SABNzbd
+#SABNzbd
 #
 # Version 0.2
 FROM wbvreeuwijk/nzb-base:latest
@@ -8,8 +8,11 @@ LABEL Description="This image will install a SABNzbd server" Version="1.0"
 
 ENV YENC 0.4.0
 
+RUN apk update \
+    && apk add p7zip
+
 # Install Cheetah
-RUN pip install Cheetah
+RUN pip install Cheetah sabyenc
 
 # Create and go to build directory
 RUN mkdir -p /usr/src && cd /usr/src 
