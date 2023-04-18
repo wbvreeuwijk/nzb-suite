@@ -1,3 +1,5 @@
+ARCHIVED: No longer maintained
+
 # docker-nzb-suite
 
 Ever wanted to setup a complete environment that does the following
